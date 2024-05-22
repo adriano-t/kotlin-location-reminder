@@ -49,13 +49,13 @@ Explain what each test does and why
 
 ## Project Milestones
 ### User Authentication
-    [] The project includes a FirebaseUI dependency
-    [] Import the google-services.json
-    [] Create a Login screen to ask users to login using an email address or a Google account. 
-        [] Upon successful login, navigate the user to the Reminders screen.   
-        [] If there is no account, the app should navigate to a Register screen.
-    [] Authentication is enabled through the Firebase console.
-    [] Create a Register screen to allow a user to register using an email address 
+    [x] The project includes a FirebaseUI dependency
+    [x] Import the google-services.json
+    [x] Create a Login screen to ask users to login using an email address or a Google account. 
+        [x] Upon successful login, navigate the user to the Reminders screen.   
+        [x] If there is no account, the app should navigate to a Register screen.
+    [x] Authentication is enabled through the Firebase console.
+    [x] Create a Register screen to allow a user to register using an email address 
         or a Google account.
 ### Map View
     [] Create a Map view that shows the user's current location

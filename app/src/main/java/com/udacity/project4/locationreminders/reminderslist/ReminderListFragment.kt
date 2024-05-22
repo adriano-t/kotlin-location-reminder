@@ -1,12 +1,18 @@
 package com.udacity.project4.locationreminders.reminderslist
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.viewModels
+import com.firebase.ui.auth.AuthUI
 import com.udacity.project4.R
+import com.udacity.project4.authentication.AuthenticationActivity
+import com.udacity.project4.authentication.AuthenticationViewModel
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentRemindersBinding
+import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import com.udacity.project4.utils.setTitle
 import com.udacity.project4.utils.setup
@@ -18,6 +24,7 @@ class ReminderListFragment : BaseFragment() {
     override val _viewModel: RemindersListViewModel by viewModel()
     private lateinit var binding: FragmentRemindersBinding
 
+    val authViewModel by viewModels<AuthenticationViewModel>()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -40,6 +47,14 @@ class ReminderListFragment : BaseFragment() {
         setupRecyclerView()
         binding.addReminderFAB.setOnClickListener {
             navigateToAddReminder()
+        }
+        authViewModel.authenticationState.observe(viewLifecycleOwner) { state ->
+            if (state != AuthenticationViewModel.AuthenticationState.AUTHENTICATED) {
+                val activity = requireActivity()
+                val intent = Intent(activity, AuthenticationActivity::class.java)
+                startActivity(intent)
+                activity.finishActivity(0)
+            }
         }
     }
 
@@ -65,7 +80,16 @@ class ReminderListFragment : BaseFragment() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.logout -> {
+                // Binary XML file line #24 in android:layout/screen_simple: Binary XML file line #24 in android:layout/screen_simple: Error inflating class LinearLayout
                 // TODO: add the logout implementation
+                AuthUI.getInstance().signOut(requireContext()).addOnSuccessListener {
+                    val intent = Intent(activity, AuthenticationActivity::class.java)
+                    intent.addFlags(
+                        Intent.FLAG_ACTIVITY_CLEAR_TASK  or
+                        Intent.FLAG_ACTIVITY_NEW_TASK
+                    )
+                    startActivity(intent)
+                }
             }
         }
         return super.onOptionsItemSelected(item)
