@@ -3,7 +3,6 @@ package com.udacity.project4.locationreminders.savereminder.selectreminderlocati
 import android.Manifest
 import android.content.pm.PackageManager
 import android.content.res.Resources
-import android.location.Location
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -29,7 +28,6 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
-import com.google.android.gms.tasks.OnSuccessListener
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
@@ -49,11 +47,13 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private val runningQOrLater = android.os.Build.VERSION.SDK_INT >=
             android.os.Build.VERSION_CODES.Q
     private var marker: Marker? = null
+
     companion object {
         private const val TAG = "SelectLocationFragment"
         private const val REQUEST_LOCATION_PERMISSION = 1
 
     }
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?,
     ): View {
@@ -69,11 +69,12 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         val mapFragment = childFragmentManager.findFragmentById(R.id.map) as? SupportMapFragment
         mapFragment?.getMapAsync(this)
-        binding.saveButton.setOnClickListener{
-            if(marker != null) {
+        binding.saveButton.setOnClickListener {
+            if (marker != null) {
                 onLocationSelected()
             } else {
-                Toast.makeText(context, getString(R.string.select_a_location), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, getString(R.string.select_a_location), Toast.LENGTH_LONG)
+                    .show()
             }
         }
         return binding.root
@@ -108,7 +109,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
 
         // TODO: call this function after the user confirms on the selected location
-        //onLocationSelected()
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -121,18 +121,22 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             map.mapType = GoogleMap.MAP_TYPE_NORMAL
             true
         }
+
         R.id.hybrid_map -> {
             map.mapType = GoogleMap.MAP_TYPE_HYBRID
             true
         }
+
         R.id.satellite_map -> {
             map.mapType = GoogleMap.MAP_TYPE_SATELLITE
             true
         }
+
         R.id.terrain_map -> {
             map.mapType = GoogleMap.MAP_TYPE_TERRAIN
             true
         }
+
         else -> super.onOptionsItemSelected(item)
     }
 
@@ -199,7 +203,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         setMapStyle(map)
         handleLocationPermission()
 
-        Toast.makeText(context, getString(R.string.map_tutorial) , Toast.LENGTH_LONG).show()
+        Toast.makeText(context, getString(R.string.map_tutorial), Toast.LENGTH_LONG).show()
     }
 
     private fun setMapLongClick(map: GoogleMap) {
@@ -259,7 +263,6 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             Log.e(TAG, "Can't find style. Error: ", e)
         }
     }
-
 
 
 }
