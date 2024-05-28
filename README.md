@@ -58,10 +58,10 @@ Explain what each test does and why
     [x] Create a Register screen to allow a user to register using an email address 
         or a Google account.
 ### Map View
-    [] Create a Map view that shows the user's current location
-        [] A screen that shows a map and asks the user to allow the location 
+    [x] Create a Map view that shows the user's current location
+        [x] A screen that shows a map and asks the user to allow the location 
             permission to show his location on the map.
-        [] The app works on all the different Android versions including Android Q.
+        [x] The app works on all the different Android versions including Android Q.
     [] Create a screen that displays the reminders retrieved from local storage.
         [] If there are no reminders, display a  "No Data"  indicator. 
         [] If there are any errors, display an error message.
@@ -76,8 +76,8 @@ Explain what each test does and why
         a. title
         b. description
         c. selected location
-    [] Style the map
-        [] Map Styling has been updated using the map styling wizard to generate a nice looking map
+    [x] Style the map
+        [x] Map Styling has been updated using the map styling wizard to generate a nice looking map
         [] Users have the option to change map type.
     [] Display a notification when a selected POI is reached
         [] When the user enters a geofence, a reminder is retrieved from the local storage 
