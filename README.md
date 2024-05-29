@@ -62,34 +62,26 @@ Explain what each test does and why
         [x] A screen that shows a map and asks the user to allow the location 
             permission to show his location on the map.
         [x] The app works on all the different Android versions including Android Q.
-    [] Create a screen that displays the reminders retrieved from local storage.
-        [] If there are no reminders, display a  "No Data"  indicator. 
-        [] If there are any errors, display an error message.
-    [] Create a screen that shows a map with the user's current location and asks the user to select
+    [x] Create a screen that shows a map with the user's current location and asks the user to select
         a point of interest to create a reminder.
-        [] The app asks the user to select a location or POI on the map and add a new marker
+        [x] The app asks the user to select a location or POI on the map and add a new marker
             at that location Upon saving, the selected location is returned to the Save Reminder 
             page and the user is asked to input the title and description for the reminder.
-        [] When the reminder is saved, a geofencing request is created.
-    [] Create a screen to add a reminder when a user reaches the selected location.
-        Each reminder should include
-        a. title
-        b. description
-        c. selected location
+        [x] When the reminder is saved, a geofencing request is created.
     [x] Style the map
         [x] Map Styling has been updated using the map styling wizard to generate a nice looking map
-        [] Users have the option to change map type.
-    [] Display a notification when a selected POI is reached
-        [] When the user enters a geofence, a reminder is retrieved from the local storage 
+        [x] Users have the option to change map type.
+    [x] Display a notification when a selected POI is reached
+        [x] When the user enters a geofence, a reminder is retrieved from the local storage 
             and a notification showing the reminder title will appear, even if the app is not open.
 ### Reminders
-    [] Add a screen to create reminders
-        [] All reminders in the location DB is displayed
-        [] If the location DB is empty, a no data indicator is displayed.
-        [] User can navigate from this screen to another screen to create a new reminder.
-        [] Reminder data should be saved to local storage.
-    [] Display details about a reminder when a selected POI is reached and the user clicked on the notification.
-        [] When the user clicks a notification, when he clicks on it, 
+    [x] Add a screen to create reminders
+        [x] All reminders in the location DB is displayed
+        [x] If the location DB is empty, a no data indicator is displayed.
+        [x] User can navigate from this screen to another screen to create a new reminder.
+        [x] Reminder data should be saved to local storage.
+    [x] Display details about a reminder when a selected POI is reached and the user clicked on the notification.
+        [x] When the user clicks a notification, when he clicks on it, 
             a new screen appears to display the reminder details.
 ### Testing
     [] Use MVVM and Dependency Injection to architect your app.

@@ -81,7 +81,6 @@ class ReminderListFragment : BaseFragment() {
         when (item.itemId) {
             R.id.logout -> {
                 // Binary XML file line #24 in android:layout/screen_simple: Binary XML file line #24 in android:layout/screen_simple: Error inflating class LinearLayout
-                // TODO: add the logout implementation
                 AuthUI.getInstance().signOut(requireContext()).addOnSuccessListener {
                     val intent = Intent(activity, AuthenticationActivity::class.java)
                     intent.addFlags(
