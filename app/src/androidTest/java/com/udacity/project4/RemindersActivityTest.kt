@@ -1,16 +1,31 @@
 package com.udacity.project4
 
 import android.app.Application
+import androidx.test.core.app.ActivityScenario
 import androidx.test.core.app.ApplicationProvider.getApplicationContext
+import androidx.test.espresso.Espresso.closeSoftKeyboard
+import androidx.test.espresso.Espresso.onView
+import androidx.test.espresso.Espresso.pressBack
+import androidx.test.espresso.IdlingRegistry
+import androidx.test.espresso.action.ViewActions.click
+import androidx.test.espresso.action.ViewActions.typeText
+import androidx.test.espresso.matcher.ViewMatchers.isDisplayed
+import androidx.test.espresso.matcher.ViewMatchers.withId
+import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
 import androidx.test.filters.LargeTest
+import com.udacity.project4.locationreminders.RemindersActivity
 import com.udacity.project4.locationreminders.data.ReminderDataSource
 import com.udacity.project4.locationreminders.data.local.LocalDB
 import com.udacity.project4.locationreminders.data.local.RemindersLocalRepository
 import com.udacity.project4.locationreminders.reminderslist.RemindersListViewModel
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
+import com.udacity.project4.util.DataBindingIdlingResource
+import com.udacity.project4.util.monitorActivity
 import kotlinx.coroutines.runBlocking
+import org.junit.After
 import org.junit.Before
+import org.junit.Test
 import org.junit.runner.RunWith
 import org.koin.androidx.viewmodel.dsl.viewModel
 import org.koin.core.context.startKoin
@@ -18,6 +33,7 @@ import org.koin.core.context.stopKoin
 import org.koin.dsl.module
 import org.koin.test.AutoCloseKoinTest
 import org.koin.test.get
+import androidx.test.espresso.assertion.ViewAssertions.matches
 
 @RunWith(AndroidJUnit4::class)
 @LargeTest
@@ -27,6 +43,8 @@ class RemindersActivityTest :
 
     private lateinit var repository: ReminderDataSource
     private lateinit var appContext: Application
+    private val idlingResource = DataBindingIdlingResource()
+
 
     /**
      * As we use Koin as a Service Locator Library to develop our code, we'll also use Koin to test our code.
@@ -66,6 +84,112 @@ class RemindersActivityTest :
     }
 
 
-//    TODO: add End to End testing to the app
+    @Before
+    fun registerIdlingResource() {
+        IdlingRegistry.getInstance().register(idlingResource)
+    }
+
+    @After
+    fun unregisterIdlingResource() {
+        IdlingRegistry.getInstance().unregister(idlingResource)
+    }
+
+    @Test
+    fun addReminder_whenValidInput_shouldDisplayInList() {
+        // Start up the Reminders screen.
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+        idlingResource.monitorActivity(activityScenario)
+
+        // Click on the FAB to add a new reminder.
+        onView(withId(R.id.addReminderFAB)).perform(click())
+
+        // Add reminder title and description.
+        onView(withId(R.id.reminderTitle)).perform(typeText("Test Title"))
+        onView(withId(R.id.reminderDescription)).perform(typeText("Test Description"))
+
+        // Close the keyboard.
+        closeSoftKeyboard()
+
+        // Open map
+        onView(withId(R.id.selectLocation)).perform(click())
+
+        // Select a location.
+        onView(withId(R.id.save_button)).perform(click())
+
+        // Save the reminder.
+        onView(withId(R.id.saveReminder)).perform(click())
+
+        // Verify that the reminder is displayed in the list.
+        onView(withText("Test Title")).check(matches(isDisplayed()))
+        onView(withText("Test Description")).check(matches(isDisplayed()))
+
+        // Make sure the activity is closed before resetting the db.
+        activityScenario.close()
+    }
+
+    @Test
+    fun displayNoDataMessage_whenNoReminders() {
+        // Start up the Reminders screen.
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+        idlingResource.monitorActivity(activityScenario)
+
+        // Verify that the "No Data" message is displayed.
+        onView(withId(R.id.noDataTextView)).check(matches(isDisplayed()))
+
+        // Close the activity.
+        activityScenario.close()
+    }
+
+    @Test
+    fun addReminder_withMissingTitle_showsError() {
+        // Start up the Reminders screen.
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+        idlingResource.monitorActivity(activityScenario)
+
+        // Click on the FAB to add a new reminder.
+        onView(withId(R.id.addReminderFAB)).perform(click())
+
+        // Leave the title blank and add a description.
+        onView(withId(R.id.reminderDescription)).perform(typeText("Test Description"))
+
+        // Close the keyboard.
+        closeSoftKeyboard()
+
+        // Select a location.
+        onView(withId(R.id.selectLocation)).perform(click())
+        onView(withId(R.id.save_button)).perform(click())
+
+        // Attempt to save the reminder.
+        onView(withId(R.id.saveReminder)).perform(click())
+
+        // Verify that the error message is displayed.
+        onView(withText(R.string.err_enter_title)).check(matches(isDisplayed()))
+
+        // Close the activity.
+        activityScenario.close()
+    }
+
+
+    @Test
+    fun navigateFromListToSaves() {
+        // Start up the Reminders screen.
+        val activityScenario = ActivityScenario.launch(RemindersActivity::class.java)
+        idlingResource.monitorActivity(activityScenario)
+
+        // Click on the FAB to add a new reminder.
+        onView(withId(R.id.addReminderFAB)).perform(click())
+
+        // Verify that the Save Reminder screen is displayed.
+        onView(withId(R.id.reminderTitle)).check(matches(isDisplayed()))
+
+        // Navigate back to the Reminders List.
+        pressBack()
+
+        // Verify that the Reminders List is displayed.
+        onView(withId(R.id.addReminderFAB)).check(matches(isDisplayed()))
+
+        // Close the activity.
+        activityScenario.close()
+    }
 
 }
