@@ -36,9 +36,7 @@ Step by step explanation of how to get a dev environment running.
 
 Right click on the `test` or `androidTest` packages and select Run Tests
 
-### Break Down Tests
-
-Explain what each test does and why
+### Tests Break Down
 
 1. androidTest
    This directory contains instrumented end-to-end tests running on a real Android device or emulator.
