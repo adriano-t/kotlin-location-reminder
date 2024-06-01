@@ -40,12 +40,34 @@ Right click on the `test` or `androidTest` packages and select Run Tests
 
 Explain what each test does and why
 
-```
-1.androidTest
-        //TODO: Students explain their testing here.
+1. androidTest
+   This directory contains instrumented end-to-end tests running on a real Android device or emulator.
+
+    - RemindersDaoTest.kt
+      Tests database operations for saving, retrieving, and deleting reminders.
+
+    - RemindersLocalRepositoryTest.kt
+      Verifies repository interactions with the DAO for CRUD operations on reminders.
+
+    - ReminderListFragmentTest.kt
+      Ensures the fragment displays reminders correctly and handles user interactions.
+
+    - RemindersActivityTest.kt
+      Tests the main activity's initialization, fragment display, and navigation.
+
 2. test
-        //TODO: Students explain their testing here.
-```
+   This directory contains unit tests running on the current machine without needing an Android device.
+   They test individual functions to ensure they behave as intended.
+
+    - data/FakeDataSource.kt
+      Provides a fake data source for isolated repository and ViewModel testing.
+
+    - reminderlist/RemindersListViewModelTest.kt
+      Verifies the ViewModel's logic for loading reminders and handling data states.
+
+    - SaveReminderViewModelTest.kt
+      Tests the ViewModel's logic for saving reminders, validating input, and updating UI state.
+
 
 ## Project Milestones
 ### User Authentication
@@ -84,29 +106,29 @@ Explain what each test does and why
         [x] When the user clicks a notification, when he clicks on it, 
             a new screen appears to display the reminder details.
 ### Testing
-    [] Use MVVM and Dependency Injection to architect your app.
-        [] The app follows the MVVM design pattern and uses ViewModels to hold the 
+    [x] Use MVVM and Dependency Injection to architect your app.
+        [x] The app follows the MVVM design pattern and uses ViewModels to hold the 
             live data objects, do the validation and interact with the data sources.
-        [] The student retrieved the ViewModels and DataSources using Koin.
-    [] Provide testing for the ViewModels, Coroutines and LiveData objects.
-        [] RemindersListViewModelTest or SaveReminderViewModelTest are present in the test package 
+        [x] The student retrieved the ViewModels and DataSources using Koin.
+    [x] Provide testing for the ViewModels, Coroutines and LiveData objects.
+        [x] RemindersListViewModelTest or SaveReminderViewModelTest are present in the test package 
             that tests the functions inside the view model.
-        [] Live data objects are tested using shouldReturnError and check_loading testing functions
-    [] Create a FakeDataSource to replace the Data Layer and test the app in isolation.
-        [] Project repo contains a FakeDataSource class that acts as a test double
+        [x] Live data objects are tested using shouldReturnError and check_loading testing functions
+    [x] Create a FakeDataSource to replace the Data Layer and test the app in isolation.
+        [x] Project repo contains a FakeDataSource class that acts as a test double
             for the LocalDataSource.
-    [] Use Espresso and Mockito to test each screen of the app:
-        [] Automation Testing using ViewMatchers and ViewInteractions to simulate 
+    [x] Use Espresso and Mockito to test each screen of the app:
+        [x] Automation Testing using ViewMatchers and ViewInteractions to simulate 
             user interactions with the app.
-        [] Testing for Snackbar and Toast messages.
-        [] Testing the fragments’ navigation.
-        [] The testing classes are at androidTest package.
-        [] Add testing for the error messages.
-    [] Test DAO (Data Access Object) and Repository classes.
-        [] Testing uses Room.inMemoryDatabaseBuilder to create a Room DB instance.
-        [] inserting and retrieving data using DAO.
-        [] predictable errors like data not found.
-    [] Add End-To-End testing for the Fragments navigation.
+        [x] Testing for Snackbar and Toast messages.
+        [x] Testing the fragments’ navigation.
+        [x] The testing classes are at androidTest package.
+        [x] Add testing for the error messages.
+    [x] Test DAO (Data Access Object) and Repository classes.
+        [x] Testing uses Room.inMemoryDatabaseBuilder to create a Room DB instance.
+        [x] inserting and retrieving data using DAO.
+        [x] predictable errors like data not found.
+    [x] Add End-To-End testing for the Fragments navigation.
 
 
 ## Student Deliverables:

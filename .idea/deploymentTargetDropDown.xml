@@ -2,22 +2,35 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="RemindersActivityTest">
+      <entry key="ReminderListFragmentTest">
         <State />
       </entry>
-      <entry key="addReminder_whenValidInput_shouldDisplayInList()">
+      <entry key="RemindersDaoTest">
         <State />
       </entry>
-      <entry key="addReminder_withMissingTitle_showsError()">
-        <State />
+      <entry key="RemindersLocalRepositoryTest">
+        <State>
+          <runningDeviceTargetSelectedWithDropDown>
+            <Target>
+              <type value="RUNNING_DEVICE_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="$USER_HOME$/.android/avd/Pixel_3a_API_34_extension_level_7_arm64-v8a.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </runningDeviceTargetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-06-01T09:51:49.014901Z" />
+        </State>
       </entry>
       <entry key="app">
         <State />
       </entry>
-      <entry key="displayNoDataMessage_whenNoReminders()">
+      <entry key="deleteAllReminders_OneReminderAdded_ReturnsEmptyList()">
         <State />
       </entry>
-      <entry key="navigateBetweenFragments()">
+      <entry key="saveReminder_retrievesReminder()">
         <State />
       </entry>
     </value>
