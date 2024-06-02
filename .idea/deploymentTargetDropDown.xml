@@ -3,13 +3,39 @@
   <component name="deploymentTargetDropDown">
     <value>
       <entry key="Tests in 'com.udacity.project4'">
-        <State />
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="$USER_HOME$/.android/avd/And_8.1_-_API_27_-_Nexus_5.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-06-02T20:00:06.661039Z" />
+        </State>
       </entry>
-      <entry key="addReminder_withMissingTitle_showsError()">
+      <entry key="addReminder_whenValidInput_shouldDisplayInList()">
         <State />
       </entry>
       <entry key="app">
-        <State />
+        <State>
+          <targetSelectedWithDropDown>
+            <Target>
+              <type value="QUICK_BOOT_TARGET" />
+              <deviceKey>
+                <Key>
+                  <type value="VIRTUAL_DEVICE_PATH" />
+                  <value value="$USER_HOME$/.android/avd/Pixel_3_API_26.avd" />
+                </Key>
+              </deviceKey>
+            </Target>
+          </targetSelectedWithDropDown>
+          <timeTargetWasSelectedWithDropDown value="2024-06-02T20:21:25.536363Z" />
+        </State>
       </entry>
       <entry key="testShowToastMessage() (1)">
         <State />

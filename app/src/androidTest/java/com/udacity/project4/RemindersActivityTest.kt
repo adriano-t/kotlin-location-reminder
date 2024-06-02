@@ -11,6 +11,10 @@ import androidx.test.espresso.Espresso.pressBack
 import androidx.test.espresso.IdlingRegistry
 import androidx.test.espresso.UiController
 import androidx.test.espresso.ViewAction
+import androidx.test.espresso.action.CoordinatesProvider
+import androidx.test.espresso.action.GeneralClickAction
+import androidx.test.espresso.action.Press
+import androidx.test.espresso.action.Tap
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.action.ViewActions.typeText
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -120,7 +124,10 @@ class RemindersActivityTest : AutoCloseKoinTest() {
         // Open map
         onView(withId(R.id.selectLocation)).perform(click())
 
-        // Select a location.
+        // Perform a long click on the map at the center
+        onView(withId(R.id.map)).perform(performLongClick())
+
+        // Press save button
         onView(withId(R.id.save_button)).perform(click())
 
         // Save the reminder.
@@ -132,6 +139,18 @@ class RemindersActivityTest : AutoCloseKoinTest() {
 
         // Make sure the activity is closed before resetting the db.
         activityScenario.close()
+    }
+
+    private fun performLongClick(): ViewAction {
+        val mapCoordinates = CoordinatesProvider { view ->
+            // Define the coordinates for the center of the map view
+            val screenPos = IntArray(2)
+            view.getLocationOnScreen(screenPos)
+            val screenX = screenPos[0] + view.width / 2
+            val screenY = screenPos[1] + view.height / 2
+            floatArrayOf(screenX.toFloat(), screenY.toFloat())
+        }
+        return GeneralClickAction(Tap.LONG, mapCoordinates, Press.FINGER)
     }
 
     @Test
@@ -164,6 +183,11 @@ class RemindersActivityTest : AutoCloseKoinTest() {
 
         // Select a location.
         onView(withId(R.id.selectLocation)).perform(click())
+
+        // Perform a long click on the map at the center
+        onView(withId(R.id.map)).perform(performLongClick())
+
+        // Press save button
         onView(withId(R.id.save_button)).perform(click())
 
         // Attempt to save the reminder.
@@ -228,7 +252,10 @@ class RemindersActivityTest : AutoCloseKoinTest() {
         // Open map
         onView(withId(R.id.selectLocation)).perform(click())
 
-        // Select a location.
+        // Perform a long click on the map at the center
+        onView(withId(R.id.map)).perform(performLongClick())
+
+        // Press save button
         onView(withId(R.id.save_button)).perform(click())
 
         // Save the reminder.

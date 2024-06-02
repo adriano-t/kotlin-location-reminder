@@ -165,6 +165,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ), REQUEST_LOCATION_PERMISSION
             )
+           return
         }
 
         map.isMyLocationEnabled = true;
@@ -254,6 +255,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         setMapLongClick(map)
         setPoiClick(map)
         setMapStyle(map)
+
         handleLocationPermission()
         enableMyLocation()
     }
