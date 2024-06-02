@@ -90,14 +90,14 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
 
-    private fun handleLocationPermission(resumed: Boolean) {
+    private fun handleLocationPermission() {
         if (ContextCompat.checkSelfPermission(
                 requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
                 requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED
         ) {
-            enableLocationSettings(resumed)
+            enableLocationSettings()
         } else {
             requestPermissions(
                 arrayOf(
@@ -186,7 +186,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
 
-    private fun enableLocationSettings(resumed: Boolean) {
+    private fun enableLocationSettings() {
         val locationRequest: LocationRequest =
             LocationRequest.create().setInterval(10000).setFastestInterval(10000)
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -195,27 +195,24 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             .addOnSuccessListener(requireActivity()) { enableMyLocation() }
             .addOnFailureListener(requireActivity()) { ex ->
                 if (ex is ResolvableApiException) {
-                    if (!resumed) {
-                        // Location settings are NOT satisfied,  but this can be fixed  by showing the user a dialog.
-                        try {
-                            // Show the dialog by calling startResolutionForResult(),  and check the result in onActivityResult().
-                            startIntentSenderForResult(
-                                ex.resolution.intentSender,
-                                REQUEST_TURN_DEVICE_LOCATION_ON,
-                                null,
-                                0,
-                                0,
-                                0,
-                                null
-                            )
+                    // Location settings are NOT satisfied,  but this can be fixed  by showing the user a dialog.
+                    try {
+                        // Show the dialog by calling startResolutionForResult(),  and check the result in onActivityResult().
+                        startIntentSenderForResult(
+                            ex.resolution.intentSender,
+                            REQUEST_TURN_DEVICE_LOCATION_ON,
+                            null,
+                            0,
+                            0,
+                            0,
+                            null
+                        )
 
-                        } catch (sendEx: SendIntentException) {
-                            // Ignore the error.
-                            Log.e(TAG, "error asking the permission")
-                        }
-                    } else {
-                        _viewModel.showSnackBarInt.value = R.string.enable_gps
+                    } catch (sendEx: SendIntentException) {
+                        // Ignore the error.
+                        Log.e(TAG, "error asking the permission")
                     }
+
                 }
             }
     }
@@ -224,16 +221,10 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
             when (resultCode) {
-                RESULT_OK -> enableMyLocation()
                 RESULT_CANCELED -> _viewModel.showSnackBarInt.value = R.string.enable_gps
             }
 
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        handleLocationPermission(true)
     }
 
     override fun onRequestPermissionsResult(
@@ -246,7 +237,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         // location data layer.
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                enableLocationSettings(false)
+                enableLocationSettings()
             }
         }
     }
@@ -257,9 +248,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         setMapLongClick(map)
         setPoiClick(map)
         setMapStyle(map)
-
-        handleLocationPermission(false)
-//        _viewModel.showToast.value = getString(R.string.map_tutorial)
+        handleLocationPermission()
+        enableMyLocation()
     }
 
     private fun setMapLongClick(map: GoogleMap) {
