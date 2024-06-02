@@ -90,7 +90,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
 
-    private fun handleLocationPermission() {
+    private fun handleLocationPermission(): Boolean {
         if (ContextCompat.checkSelfPermission(
                 requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
             ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
@@ -105,7 +105,9 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                     Manifest.permission.ACCESS_COARSE_LOCATION
                 ), 1
             )
+            return false
         }
+        return true
     }
 
 
@@ -166,6 +168,9 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         }
 
         map.isMyLocationEnabled = true;
+        map.setOnMyLocationButtonClickListener {
+            handleLocationPermission()
+        }
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
 
         fusedLocationClient!!.lastLocation.addOnSuccessListener(requireActivity()) { location ->
@@ -222,6 +227,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         if (requestCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
             when (resultCode) {
                 RESULT_CANCELED -> _viewModel.showSnackBarInt.value = R.string.enable_gps
+                RESULT_OK -> enableMyLocation()
             }
 
         }
