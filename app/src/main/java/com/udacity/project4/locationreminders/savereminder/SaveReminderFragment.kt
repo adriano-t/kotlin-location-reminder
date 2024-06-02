@@ -18,6 +18,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.databinding.DataBindingUtil
+import androidx.fragment.app.Fragment
 import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.Geofence
 import com.google.android.gms.location.GeofencingClient
@@ -174,9 +175,7 @@ class SaveReminderFragment : BaseFragment() {
         locationSettingsResponseTask.addOnFailureListener { exception ->
             if (exception is ResolvableApiException && resolve) {
                 try {
-                    exception.startResolutionForResult(
-                        requireActivity(), REQUEST_TURN_DEVICE_LOCATION_ON
-                    )
+                    startIntentSenderForResult(exception.resolution.intentSender, REQUEST_TURN_DEVICE_LOCATION_ON, null, 0, 0, 0, null)
                 } catch (sendEx: IntentSender.SendIntentException) {
                     Log.d(TAG, "Error getting location settings resolution: " + sendEx.message)
                 }
@@ -227,13 +226,10 @@ class SaveReminderFragment : BaseFragment() {
                 permissionsArray += Manifest.permission.ACCESS_BACKGROUND_LOCATION
                 REQUEST_FOREGROUND_AND_BACKGROUND_PERMISSION_RESULT_CODE
             }
-
             else -> REQUEST_FOREGROUND_ONLY_PERMISSIONS_REQUEST_CODE
         }
         Log.d(TAG, "Request foreground only location permission")
-        ActivityCompat.requestPermissions(
-            requireActivity(), permissionsArray, resultCode
-        )
+        requestPermissions(permissionsArray, resultCode)
     }
 
     /*
@@ -263,19 +259,12 @@ class SaveReminderFragment : BaseFragment() {
 
         geofencingClient.addGeofences(geofencingRequest, geofencePendingIntent).run {
             addOnSuccessListener {
-                if (isAdded) {
-                    Toast.makeText(requireActivity(), R.string.geofence_entered, Toast.LENGTH_SHORT)
-                        .show()
-                }
                 _viewModel.validateAndSaveReminder(reminderItem)
                 Log.d(TAG, "Added Geofence successfully: " + geofence.requestId)
-
             }
             addOnFailureListener {
                 if (isAdded) {
-                    Toast.makeText(
-                        requireActivity(), R.string.geofences_not_added, Toast.LENGTH_SHORT
-                    ).show()
+                    _viewModel.showToast.value = getString(R.string.geofences_not_added)
                 }
                 if ((it.message != null)) {
                     Log.e(TAG, it.message!!)

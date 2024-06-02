@@ -46,5 +46,6 @@
     <string name="location">Location:</string>
     <string name="ok">OK</string>
     <string name="close">CLOSE</string>
+    <string name="enable_gps">Please enable the GPS to get your current location</string>
 
 </resources>

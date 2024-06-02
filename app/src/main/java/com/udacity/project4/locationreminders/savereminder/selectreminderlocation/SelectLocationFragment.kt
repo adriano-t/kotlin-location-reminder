@@ -1,6 +1,10 @@
 package com.udacity.project4.locationreminders.savereminder.selectreminderlocation
 
 import android.Manifest
+import android.app.Activity.RESULT_CANCELED
+import android.app.Activity.RESULT_OK
+import android.content.Intent
+import android.content.IntentSender.SendIntentException
 import android.content.pm.PackageManager
 import android.content.res.Resources
 import android.os.Build
@@ -17,8 +21,11 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import com.google.android.gms.common.api.ResolvableApiException
 import com.google.android.gms.location.FusedLocationProviderClient
+import com.google.android.gms.location.LocationRequest
 import com.google.android.gms.location.LocationServices
+import com.google.android.gms.location.LocationSettingsRequest
 import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.GoogleMap
 import com.google.android.gms.maps.OnMapReadyCallback
@@ -45,13 +52,14 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     private lateinit var map: GoogleMap
     private lateinit var binding: FragmentSelectLocationBinding
     private var fusedLocationClient: FusedLocationProviderClient? = null
-    private val runningQOrLater = android.os.Build.VERSION.SDK_INT >=
-            android.os.Build.VERSION_CODES.Q
+    private val runningQOrLater =
+        android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q
     private var marker: Marker? = null
 
     companion object {
         private const val TAG = "SelectLocationFragment"
         private const val REQUEST_LOCATION_PERMISSION = 1
+        private const val REQUEST_TURN_DEVICE_LOCATION_ON = 2
 
     }
 
@@ -82,22 +90,20 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     }
 
 
-    private fun handleLocationPermission() {
+    private fun handleLocationPermission(resumed: Boolean) {
         if (ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_FINE_LOCATION
-            ) == PackageManager.PERMISSION_GRANTED &&
-            ContextCompat.checkSelfPermission(
-                requireContext(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
-            ) ==
-            PackageManager.PERMISSION_GRANTED
+                requireContext(), Manifest.permission.ACCESS_FINE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED && ContextCompat.checkSelfPermission(
+                requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION
+            ) == PackageManager.PERMISSION_GRANTED
         ) {
-            enableMyLocation()
+            enableLocationSettings(resumed)
         } else {
             requestPermissions(
-                arrayOf(Manifest.permission.ACCESS_FINE_LOCATION),
-                1
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ), 1
             )
         }
     }
@@ -146,37 +152,88 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
     private fun enableMyLocation() {
         if (ActivityCompat.checkSelfPermission(
-                requireActivity(),
-                Manifest.permission.ACCESS_FINE_LOCATION
+                requireActivity(), Manifest.permission.ACCESS_FINE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
-                requireActivity(),
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                requireActivity(), Manifest.permission.ACCESS_COARSE_LOCATION
             ) != PackageManager.PERMISSION_GRANTED
         ) {
-            ActivityCompat.requestPermissions(
-                requireActivity(),
-                arrayOf<String>(Manifest.permission.ACCESS_FINE_LOCATION),
-                REQUEST_LOCATION_PERMISSION
+            requestPermissions(
+                arrayOf(
+                    Manifest.permission.ACCESS_FINE_LOCATION,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                ), REQUEST_LOCATION_PERMISSION
             )
         }
 
         map.isMyLocationEnabled = true;
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
-        fusedLocationClient!!.lastLocation
-            .addOnSuccessListener(requireActivity()) { location ->
-                // Got last known location. In some rare situations this can be null.
-                if (location != null) {
-                    val latLng = LatLng(
-                        location.latitude,
-                        location.longitude
-                    )
-                    map.moveCamera(
-                        CameraUpdateFactory.newLatLngZoom(latLng, 12F)
-                    )
-                    setMarker(latLng, getString(R.string.you), "")
+
+        fusedLocationClient!!.lastLocation.addOnSuccessListener(requireActivity()) { location ->
+            // Got last known location. In some rare situations this can be null.
+            if (location != null) {
+                val latLng = LatLng(
+                    location.latitude, location.longitude
+                )
+                map.moveCamera(
+                    CameraUpdateFactory.newLatLngZoom(latLng, 12F)
+                )
+                setMarker(latLng, getString(R.string.you), "")
+            }
+        }.addOnFailureListener() {
+            Log.e(TAG, "Location permission not granted")
+        }
+
+    }
+
+
+    private fun enableLocationSettings(resumed: Boolean) {
+        val locationRequest: LocationRequest =
+            LocationRequest.create().setInterval(10000).setFastestInterval(10000)
+                .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
+        val builder = LocationSettingsRequest.Builder().addLocationRequest(locationRequest)
+        LocationServices.getSettingsClient(requireActivity()).checkLocationSettings(builder.build())
+            .addOnSuccessListener(requireActivity()) { enableMyLocation() }
+            .addOnFailureListener(requireActivity()) { ex ->
+                if (ex is ResolvableApiException) {
+                    if (!resumed) {
+                        // Location settings are NOT satisfied,  but this can be fixed  by showing the user a dialog.
+                        try {
+                            // Show the dialog by calling startResolutionForResult(),  and check the result in onActivityResult().
+                            startIntentSenderForResult(
+                                ex.resolution.intentSender,
+                                REQUEST_TURN_DEVICE_LOCATION_ON,
+                                null,
+                                0,
+                                0,
+                                0,
+                                null
+                            )
+
+                        } catch (sendEx: SendIntentException) {
+                            // Ignore the error.
+                            Log.e(TAG, "error asking the permission")
+                        }
+                    } else {
+                        _viewModel.showSnackBarInt.value = R.string.enable_gps
+                    }
                 }
             }
+    }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_TURN_DEVICE_LOCATION_ON) {
+            when (resultCode) {
+                RESULT_OK -> enableMyLocation()
+                RESULT_CANCELED -> _viewModel.showSnackBarInt.value = R.string.enable_gps
+            }
+
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        handleLocationPermission(true)
     }
 
     override fun onRequestPermissionsResult(
@@ -189,7 +246,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         // location data layer.
         if (requestCode == REQUEST_LOCATION_PERMISSION) {
             if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
-                enableMyLocation()
+                enableLocationSettings(false)
             }
         }
     }
@@ -200,19 +257,16 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         setMapLongClick(map)
         setPoiClick(map)
         setMapStyle(map)
-        handleLocationPermission()
 
-        Toast.makeText(context, getString(R.string.map_tutorial), Toast.LENGTH_LONG).show()
+        handleLocationPermission(false)
+//        _viewModel.showToast.value = getString(R.string.map_tutorial)
     }
 
     private fun setMapLongClick(map: GoogleMap) {
         map.setOnMapLongClickListener { latLng ->
             // A Snippet is Additional text that's displayed below the title.
             val snippet = String.format(
-                Locale.getDefault(),
-                "Lat: %1$.5f, Long: %2$.5f",
-                latLng.latitude,
-                latLng.longitude
+                Locale.getDefault(), "Lat: %1$.5f, Long: %2$.5f", latLng.latitude, latLng.longitude
             )
             setMarker(latLng, getString(R.string.dropped_pin), snippet)
         }
@@ -225,10 +279,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
     ) {
         marker?.remove();
         marker = map.addMarker(
-            MarkerOptions()
-                .position(latLng)
-                .title(title)
-                .snippet(snippet)
+            MarkerOptions().position(latLng).title(title).snippet(snippet)
                 .icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_GREEN))
         )
     }
@@ -250,8 +301,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
             // in a raw resource file.
             val success = map.setMapStyle(
                 MapStyleOptions.loadRawResourceStyle(
-                    requireActivity(),
-                    R.raw.map_style
+                    requireActivity(), R.raw.map_style
                 )
             )
 

@@ -2,35 +2,16 @@
 <project version="4">
   <component name="deploymentTargetDropDown">
     <value>
-      <entry key="ReminderListFragmentTest">
+      <entry key="Tests in 'com.udacity.project4'">
         <State />
       </entry>
-      <entry key="RemindersDaoTest">
+      <entry key="addReminder_withMissingTitle_showsError()">
         <State />
-      </entry>
-      <entry key="RemindersLocalRepositoryTest">
-        <State>
-          <runningDeviceTargetSelectedWithDropDown>
-            <Target>
-              <type value="RUNNING_DEVICE_TARGET" />
-              <deviceKey>
-                <Key>
-                  <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="$USER_HOME$/.android/avd/Pixel_3a_API_34_extension_level_7_arm64-v8a.avd" />
-                </Key>
-              </deviceKey>
-            </Target>
-          </runningDeviceTargetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-06-01T09:51:49.014901Z" />
-        </State>
       </entry>
       <entry key="app">
         <State />
       </entry>
-      <entry key="deleteAllReminders_OneReminderAdded_ReturnsEmptyList()">
-        <State />
-      </entry>
-      <entry key="saveReminder_retrievesReminder()">
+      <entry key="testShowToastMessage() (1)">
         <State />
       </entry>
     </value>
