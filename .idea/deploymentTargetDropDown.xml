@@ -10,12 +10,12 @@
               <deviceKey>
                 <Key>
                   <type value="VIRTUAL_DEVICE_PATH" />
-                  <value value="$USER_HOME$/.android/avd/And_8.1_-_API_27_-_Nexus_5.avd" />
+                  <value value="$USER_HOME$/.android/avd/Pixel_4_API_29.avd" />
                 </Key>
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-06-02T20:00:06.661039Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-06-03T06:05:04.771600Z" />
         </State>
       </entry>
       <entry key="addReminder_whenValidInput_shouldDisplayInList()">
@@ -34,7 +34,7 @@
               </deviceKey>
             </Target>
           </targetSelectedWithDropDown>
-          <timeTargetWasSelectedWithDropDown value="2024-06-02T20:21:25.536363Z" />
+          <timeTargetWasSelectedWithDropDown value="2024-06-03T06:39:34.832779Z" />
         </State>
       </entry>
       <entry key="testShowToastMessage() (1)">

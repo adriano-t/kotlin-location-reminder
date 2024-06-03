@@ -7,8 +7,10 @@ import android.content.Intent
 import android.content.IntentSender.SendIntentException
 import android.content.pm.PackageManager
 import android.content.res.Resources
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
@@ -35,10 +37,13 @@ import com.google.android.gms.maps.model.LatLng
 import com.google.android.gms.maps.model.MapStyleOptions
 import com.google.android.gms.maps.model.Marker
 import com.google.android.gms.maps.model.MarkerOptions
+import com.google.android.material.snackbar.Snackbar
+import com.udacity.project4.BuildConfig
 import com.udacity.project4.R
 import com.udacity.project4.base.BaseFragment
 import com.udacity.project4.base.NavigationCommand
 import com.udacity.project4.databinding.FragmentSelectLocationBinding
+import com.udacity.project4.locationreminders.savereminder.SaveReminderFragment
 import com.udacity.project4.locationreminders.savereminder.SaveReminderViewModel
 import com.udacity.project4.utils.setDisplayHomeAsUpEnabled
 import org.koin.android.ext.android.inject
@@ -103,7 +108,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
                 arrayOf(
                     Manifest.permission.ACCESS_FINE_LOCATION,
                     Manifest.permission.ACCESS_COARSE_LOCATION
-                ), 1
+                ), REQUEST_LOCATION_PERMISSION
             )
             return false
         }
@@ -193,6 +198,8 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
 
 
     private fun enableLocationSettings() {
+
+        enableMyLocation()
         val locationRequest: LocationRequest =
             LocationRequest.create().setInterval(10000).setFastestInterval(10000)
                 .setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY)
@@ -240,10 +247,19 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        // Check if location permissions are granted and if so enable the
-        // location data layer.
-        if (requestCode == REQUEST_LOCATION_PERMISSION) {
-            if (grantResults.isNotEmpty() && (grantResults[0] == PackageManager.PERMISSION_GRANTED)) {
+        // Check if location permissions are granted
+        if(grantResults.isNotEmpty()) {
+            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
+                Snackbar.make(
+                    binding.root, R.string.permission_denied_select, Snackbar.LENGTH_INDEFINITE
+                ).setAction(R.string.settings) {
+                    startActivity(Intent().apply {
+                        action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
+                        data = Uri.fromParts("package", BuildConfig.APPLICATION_ID, null)
+                        flags = Intent.FLAG_ACTIVITY_NEW_TASK
+                    })
+                }.show()
+            } else {
                 enableLocationSettings()
             }
         }
@@ -257,7 +273,7 @@ class SelectLocationFragment : BaseFragment(), OnMapReadyCallback {
         setMapStyle(map)
 
         handleLocationPermission()
-        enableMyLocation()
+
     }
 
     private fun setMapLongClick(map: GoogleMap) {
